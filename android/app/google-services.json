@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "923156506754",
+    "project_id": "noviestock",
+    "storage_bucket": "noviestock.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:923156506754:android:5d876d1d73f9f966c12c9b",
+        "android_client_info": {
+          "package_name": "com.example.novistock"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCCr31uF81hwVlfEYH-dkEPoeslbYg_Tk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

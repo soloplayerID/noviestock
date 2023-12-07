@@ -68,7 +68,7 @@ class _AddVisitScreenState extends State<AddVisitScreen>
         child: Column(
           children: [
             Container(
-                color: kLightBlue,
+                color: kAlmostLightBlue,
                 padding: const EdgeInsets.only(top: 50, left: 20, right: 20),
                 height: 190,
                 child: Column(

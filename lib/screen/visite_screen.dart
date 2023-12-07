@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 
@@ -12,6 +13,8 @@ class VisiteScreen extends StatefulWidget {
 }
 
 class _VisiteScreenState extends State<VisiteScreen> {
+  var db = FirebaseFirestore.instance;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,7 +68,6 @@ class _VisiteScreenState extends State<VisiteScreen> {
               child: SingleChildScrollView(
                 scrollDirection: Axis.vertical,
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Hello Novie',
                         style: kPoppinsRegularBold.copyWith(
@@ -76,83 +78,150 @@ class _VisiteScreenState extends State<VisiteScreen> {
                     const SizedBox(
                       height: 12,
                     ),
-                    ListView.builder(
-                      itemCount: 1,
-                      scrollDirection: Axis.vertical,
-                      primary: false,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) => Container(
-                        height: 120,
-                        margin: const EdgeInsets.symmetric(vertical: 5.0),
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                            color: kLighterGreen,
-                            borderRadius: BorderRadius.circular(15)),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text('2023-07-11',
-                                    maxLines: 2,
-                                    style: kPoppinsMediumBold.copyWith(
-                                        color: kLightBlue, fontSize: 13.3)),
-                                Container(
-                                    padding: const EdgeInsets.all(8),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: StreamBuilder(
+                          stream: db.collection('visits').snapshots(),
+                          builder: (context, snapshots) {
+                            if (snapshots.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+                            if (snapshots.hasError) {
+                              return const Center(child: Text('Error'));
+                            }
+                            //Olah data
+                            var dataVisits = snapshots.data!.docs;
+                            return ListView.builder(
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                              itemCount: dataVisits.length,
+                              itemBuilder: (context, index) {
+                                return InkWell(
+                                  onTap: () {
+                                    // Navigator.push(
+                                    //     context,
+                                    //     MaterialPageRoute(
+                                    //         builder: (context) => DetailScreen(
+                                    //               harga: dataDestinations[index]
+                                    //                   .data()['harga'],
+                                    //               imgUrl:
+                                    //                   dataDestinations[index]
+                                    //                       .data()['image'],
+                                    //               placeName:
+                                    //                   dataDestinations[index]
+                                    //                       .data()['name'],
+                                    //               desc: dataDestinations[index]
+                                    //                   .data()['desc'],
+                                    //               destination: dataDestinations[
+                                    //                       index]
+                                    //                   .data()['destination'],
+                                    //             )));
+                                  },
+                                  child: Container(
+                                    height: 120,
+                                    margin: const EdgeInsets.symmetric(
+                                        vertical: 5.0),
+                                    padding: const EdgeInsets.all(10),
                                     decoration: BoxDecoration(
-                                        color: const Color(0xffFFF0C5),
+                                        color: kLighterGreen,
                                         borderRadius:
-                                            BorderRadius.circular(12)),
-                                    child: Text('Checkin',
-                                        style: kPoppinsMediumBold.copyWith(
-                                            color: kDarkBlue, fontSize: 14)))
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 8,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SizedBox(
-                                        width: 200,
-                                        child: Text('prociez 123',
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 1,
-                                            style: kPoppinsMediumBold.copyWith(
-                                                color: kGrey, fontSize: 14))),
-                                    SizedBox(
-                                      width: 200,
-                                      child: Text('visit kesini',
-                                          style: kPoppinsMediumBold.copyWith(
-                                              color: kDarkBlue, fontSize: 14)),
+                                            BorderRadius.circular(15)),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                                '${dataVisits[index].data()['createdDate']}',
+                                                maxLines: 2,
+                                                style:
+                                                    kPoppinsMediumBold.copyWith(
+                                                        color: kLightBlue,
+                                                        fontSize: 13.3)),
+                                            Container(
+                                                padding:
+                                                    const EdgeInsets.all(8),
+                                                decoration: BoxDecoration(
+                                                    color:
+                                                        const Color(0xffFFF0C5),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12)),
+                                                child: Text(
+                                                    '${dataVisits[index].data()['visitName']}',
+                                                    style: kPoppinsMediumBold
+                                                        .copyWith(
+                                                            color: kDarkBlue,
+                                                            fontSize: 14)))
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                SizedBox(
+                                                    width: 200,
+                                                    child: Text(
+                                                        '${dataVisits[index].data()['description']}',
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        maxLines: 1,
+                                                        style:
+                                                            kPoppinsMediumBold
+                                                                .copyWith(
+                                                                    color:
+                                                                        kGrey,
+                                                                    fontSize:
+                                                                        14))),
+                                                SizedBox(
+                                                  width: 200,
+                                                  child: Text(
+                                                      '${dataVisits[index].data()['createdTime']}',
+                                                      style: kPoppinsMediumBold
+                                                          .copyWith(
+                                                              color: kDarkBlue,
+                                                              fontSize: 14)),
+                                                ),
+                                              ],
+                                            ),
+                                            Container(
+                                              padding: const EdgeInsets.all(12),
+                                              decoration: BoxDecoration(
+                                                  color: kLightWhite,
+                                                  borderRadius:
+                                                      BorderRadius.circular(8)),
+                                              child: InkWell(
+                                                  onTap: () {},
+                                                  child: const Icon(
+                                                    Icons.arrow_right,
+                                                    color: kGrey,
+                                                  )),
+                                            ),
+                                          ],
+                                        )
+                                      ],
                                     ),
-                                  ],
-                                ),
-                                Container(
-                                  padding: const EdgeInsets.all(12),
-                                  decoration: BoxDecoration(
-                                      color: kLightWhite,
-                                      borderRadius: BorderRadius.circular(8)),
-                                  child: InkWell(
-                                      onTap: () {},
-                                      child: const Icon(
-                                        Icons.arrow_right,
-                                        color: kGrey,
-                                      )),
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                    )
+                                  ),
+                                );
+                              },
+                            );
+                          }),
+                    ),
                   ],
                 ),
               ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 
 import '../helper/constants.dart';
+import 'visit/add_visit_screen.dart';
 
 class VisiteScreen extends StatefulWidget {
   const VisiteScreen({super.key});
@@ -14,7 +15,7 @@ class _VisiteScreenState extends State<VisiteScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
+      body: SizedBox(
         width: MediaQuery.of(context).size.width,
         height: double.infinity,
         child: Column(
@@ -35,7 +36,10 @@ class _VisiteScreenState extends State<VisiteScreen> {
                   ),
                   InkWell(
                     onTap: () {
-                      
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const AddVisitScreen()));
                     },
                     child: Container(
                       padding: const EdgeInsets.all(12),
@@ -73,99 +77,82 @@ class _VisiteScreenState extends State<VisiteScreen> {
                       height: 12,
                     ),
                     ListView.builder(
-                            itemCount: 1,
-                            scrollDirection: Axis.vertical,
-                            primary: false,
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemBuilder: (context, index) => Container(
-                              height: 120,
-                              margin: const EdgeInsets.symmetric(vertical: 5.0),
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                  color: kLighterGreen,
-                                  borderRadius: BorderRadius.circular(15)),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text('2023-07-11',
-                                          maxLines: 2,
-                                          style: kPoppinsMediumBold.copyWith(
-                                              color: kLightBlue,
-                                              fontSize: 13.3)),
-                                      Container(
-                                          padding: const EdgeInsets.all(8),
-                                          decoration: BoxDecoration(
-                                              color: const Color(0xffFFF0C5),
-                                              borderRadius:
-                                                  BorderRadius.circular(12)),
-                                          child: Text('Checkin',
-                                              style:
-                                                  kPoppinsMediumBold.copyWith(
-                                                      color: kDarkBlue,
-                                                      fontSize: 14)))
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                    height: 8,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          SizedBox(
-                                              width: 200,
-                                              child: Text(
-                                                  'prociez 123',
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  maxLines: 1,
-                                                  style: kPoppinsMediumBold
-                                                      .copyWith(
-                                                          color: kGrey,
-                                                          fontSize: 14))),
-                                          SizedBox(
-                                            width: 200,
-                                            child: Text(
-                                                'visit kesini',
-                                                style:
-                                                    kPoppinsMediumBold.copyWith(
-                                                        color: kDarkBlue,
-                                                        fontSize: 14)),
-                                          ),
-                                        ],
-                                      ),
-                                      Container(
-                                        padding: const EdgeInsets.all(12),
-                                        decoration: BoxDecoration(
-                                            color: kLightWhite,
-                                            borderRadius:
-                                                BorderRadius.circular(8)),
-                                        child: InkWell(
-                                            onTap: () {
-                                              
-                                            },
-                                            child: const Icon(
-                                              Icons.arrow_right,
-                                              color: kGrey,
-                                            )),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              ),
+                      itemCount: 1,
+                      scrollDirection: Axis.vertical,
+                      primary: false,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) => Container(
+                        height: 120,
+                        margin: const EdgeInsets.symmetric(vertical: 5.0),
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                            color: kLighterGreen,
+                            borderRadius: BorderRadius.circular(15)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('2023-07-11',
+                                    maxLines: 2,
+                                    style: kPoppinsMediumBold.copyWith(
+                                        color: kLightBlue, fontSize: 13.3)),
+                                Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                        color: const Color(0xffFFF0C5),
+                                        borderRadius:
+                                            BorderRadius.circular(12)),
+                                    child: Text('Checkin',
+                                        style: kPoppinsMediumBold.copyWith(
+                                            color: kDarkBlue, fontSize: 14)))
+                              ],
                             ),
-                          )
+                            const SizedBox(
+                              height: 8,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                        width: 200,
+                                        child: Text('prociez 123',
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
+                                            style: kPoppinsMediumBold.copyWith(
+                                                color: kGrey, fontSize: 14))),
+                                    SizedBox(
+                                      width: 200,
+                                      child: Text('visit kesini',
+                                          style: kPoppinsMediumBold.copyWith(
+                                              color: kDarkBlue, fontSize: 14)),
+                                    ),
+                                  ],
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                      color: kLightWhite,
+                                      borderRadius: BorderRadius.circular(8)),
+                                  child: InkWell(
+                                      onTap: () {},
+                                      child: const Icon(
+                                        Icons.arrow_right,
+                                        color: kGrey,
+                                      )),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                    )
                   ],
                 ),
               ),

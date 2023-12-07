@@ -57,7 +57,9 @@ dependencies:
   rflutter_alert: ^2.0.4
   flutter_conditional_rendering: ^2.0.0
   firebase_core: ^2.15.1
-  cloud_firestore: ^4.9.1
+  cloud_firestore: ^4.13.3
+  flutter_typeahead: ^4.6.2
+  geolocator: ^10.0.1
 
 dev_dependencies:
   flutter_test:

@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:line_icons/line_icons.dart';
 
 import '../helper/constants.dart';
+import 'stock/add_stock_screen.dart';
 
 class StockScreen extends StatefulWidget {
   const StockScreen({super.key});
@@ -15,40 +16,31 @@ class StockScreen extends StatefulWidget {
 class _StockScreenState extends State<StockScreen> {
   var db = FirebaseFirestore.instance;
   Map<String, dynamic>? destinationResponse;
-  List stockResponse = [];
 
-  @override
-  void initState() {
-    super.initState();
+  // void searchFromFirebase() async {
+  //   final result =
+  //       (await FirebaseFirestore.instance.collection('stocks').get()).docs;
 
-    getFromFirebase();
-    searchFromFirebase();
-  }
+  //   setState(() {
+  //     stockResponse = result.map((e) => e.data()).toList();
+  //     print('===idproduct: ${stockResponse[0]['id_product']}');
+  //   });
+  // }
 
-  void searchFromFirebase() async {
-    final result =
-        (await FirebaseFirestore.instance.collection('stocks').get()).docs;
+  // void getFromFirebase() async {
+  //   final DocumentSnapshot result = await FirebaseFirestore.instance
+  //       .collection('products')
+  //       .doc("0Xa6sRt7cxrdkLdsANUU")
+  //       .get();
 
-    setState(() {
-      stockResponse = result.map((e) => e.data()).toList();
-      print('===idproduct: ${stockResponse[0]['id_product']}');
-    });
-  }
-
-  void getFromFirebase() async {
-    final DocumentSnapshot result = await FirebaseFirestore.instance
-        .collection('products')
-        .doc("0Xa6sRt7cxrdkLdsANUU")
-        .get();
-
-    setState(() {
-      destinationResponse =
-          result.data() as Map<String, dynamic>?; // Konversi eksplisit
-      if (destinationResponse != null) {
-        print('Product Name: ${destinationResponse!['product_name']}');
-      }
-    });
-  }
+  //   setState(() {
+  //     destinationResponse =
+  //         result.data() as Map<String, dynamic>?; // Konversi eksplisit
+  //     if (destinationResponse != null) {
+  //       print('Product Name: ${destinationResponse!['product_name']}');
+  //     }
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +53,7 @@ class _StockScreenState extends State<StockScreen> {
             Container(
               color: kAlmostLightBlue,
               padding: const EdgeInsets.only(top: 35, left: 20, right: 20),
-              height: 100,
+              height: 95,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -74,10 +66,10 @@ class _StockScreenState extends State<StockScreen> {
                   ),
                   InkWell(
                     onTap: () {
-                      // Navigator.push(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //         builder: (context) => const AddStockScreen()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const AddStockScreen()));
                     },
                     child: Container(
                       padding: const EdgeInsets.all(12),
@@ -107,7 +99,7 @@ class _StockScreenState extends State<StockScreen> {
                     Text('Hello Novie',
                         style: kPoppinsRegularBold.copyWith(
                             color: kGrey, fontSize: 16)),
-                    Text('products',
+                    Text('Stocks',
                         style: kPoppinsMediumBold.copyWith(
                             color: kAlmostLightBlue, fontSize: 28)),
                     const SizedBox(
@@ -156,7 +148,7 @@ class _StockScreenState extends State<StockScreen> {
                                     //             )));
                                   },
                                   child: Container(
-                                    height: 120,
+                                    height: 160,
                                     margin: const EdgeInsets.symmetric(
                                         vertical: 5.0),
                                     padding: const EdgeInsets.all(10),
@@ -185,24 +177,53 @@ class _StockScreenState extends State<StockScreen> {
                                               const SizedBox(
                                                 height: 8,
                                               ),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    'Expired Date: ${dataProducts[index].data()['expired_date']}',
+                                                    style: GoogleFonts.nunito(
+                                                      fontSize: 13,
+                                                      color: const Color(
+                                                          0xFF4c4c4c),
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    'nama Site: ${dataProducts[index].data()['site_name']}',
+                                                    style: GoogleFonts.nunito(
+                                                      fontSize: 13,
+                                                      color: const Color(
+                                                          0xFF4c4c4c),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(
+                                                height: 14,
+                                              ),
                                               Text(
-                                                'Expired Date: ${dataProducts[index].data()['expiredDate']}',
+                                                'qty: ${dataProducts[index].data()['qty']}',
                                                 style: GoogleFonts.nunito(
-                                                  fontSize: 13,
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
                                                   color:
-                                                      const Color(0xFF4c4c4c),
+                                                      const Color(0xFFE91E5A),
                                                 ),
                                               ),
                                               const SizedBox(
                                                 height: 14,
                                               ),
                                               Text(
-                                                'stock: ${dataProducts[index].data()['qty']}',
+                                                'desc: ${dataProducts[index].data()['description']}',
                                                 style: GoogleFonts.nunito(
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.bold,
                                                   color:
-                                                      const Color(0xFFE91E5A),
+                                                      const Color(0xFF4c4c4c),
                                                 ),
                                               ),
                                             ],

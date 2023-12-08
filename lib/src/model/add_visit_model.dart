@@ -6,6 +6,8 @@ class AddVisitModel {
   String idStatus = ''; //checkin / checkout
   String lat = '';
   String long = '';
+  int originSelectId = 0;
+  String originSelectName = '';
   final location = TextEditingController();
   final keterangan = TextEditingController();
   final statusVisit = TextEditingController();

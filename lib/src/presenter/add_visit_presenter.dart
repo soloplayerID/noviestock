@@ -28,6 +28,7 @@ class AddVisitPresenter implements AddVisitPresenterAbstract {
       "description": _addVisitModel.keterangan.text,
       "location": "${_addVisitModel.lat}, ${_addVisitModel.long}",
       "visitName": _addVisitModel.statusVisit.text,
+      "name_site": _addVisitModel.originSelectName,
       "createdDate": createddate,
       "createdTime": createdtime,
     };

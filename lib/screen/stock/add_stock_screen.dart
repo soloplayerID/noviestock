@@ -2,30 +2,30 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:novistock/helper/constants.dart';
-import 'package:novistock/src/model/add_visit_model.dart';
+import 'package:novistock/src/presenter/add_stock_presenter.dart';
+import 'package:novistock/src/state/add_stock_state.dart';
 
-import '../../src/presenter/add_visit_presenter.dart';
-import '../../src/state/add_visit_state.dart';
+import '../../src/model/add_stock_model.dart';
 import '../fragments/icon_text_widget.dart';
 import '../fragments/modal_search.dart';
+import '../fragments/modal_search_expired.dart';
+import '../fragments/modal_search_products.dart';
 
-class AddVisitScreen extends StatefulWidget {
-  const AddVisitScreen({super.key});
+class AddStockScreen extends StatefulWidget {
+  const AddStockScreen({super.key});
 
   @override
-  State<AddVisitScreen> createState() => _AddVisitScreenState();
+  State<AddStockScreen> createState() => _AddStocknState();
 }
 
-class _AddVisitScreenState extends State<AddVisitScreen>
-    implements AddVisitState {
-  late AddVisitModel _addVisitModel;
-  late AddVisitPresenter _addVisitPresenter;
+class _AddStocknState extends State<AddStockScreen> implements AddStockState {
+  late AddStockModel _addStockModel;
+  late AddStockPresenter _addStockPresenter;
   List siteResponse = [];
+  List productsResponse = [];
 
   // Daftar pilihan untuk dropdown, berisi Map dengan pasangan ID dan nama
   final List<Map<String, dynamic>> _dropdownItems = [
@@ -33,35 +33,35 @@ class _AddVisitScreenState extends State<AddVisitScreen>
     {'id': '1', 'name': 'checkout'},
   ];
 
-  _AddVisitScreenState() {
-    _addVisitPresenter = AddVisitPresenter();
+  _AddStocknState() {
+    _addStockPresenter = AddStockPresenter();
   }
 
-  Future<Position> _getCurrentLocation() async {
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return Future.error('Location services are disabled');
-    }
+  // Future<Position> _getCurrentLocation() async {
+  //   bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  //   if (!serviceEnabled) {
+  //     return Future.error('Location services are disabled');
+  //   }
 
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return Future.error('Location permissions are denied');
-      }
-    }
+  //   LocationPermission permission = await Geolocator.checkPermission();
+  //   if (permission == LocationPermission.denied) {
+  //     permission = await Geolocator.requestPermission();
+  //     if (permission == LocationPermission.denied) {
+  //       return Future.error('Location permissions are denied');
+  //     }
+  //   }
 
-    if (permission == LocationPermission.deniedForever) {
-      return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
-    }
-    return await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.best);
-  }
+  //   if (permission == LocationPermission.deniedForever) {
+  //     return Future.error(
+  //         'Location permissions are permanently denied, we cannot request permissions.');
+  //   }
+  //   return await Geolocator.getCurrentPosition(
+  //       desiredAccuracy: LocationAccuracy.best);
+  // }
 
   @override
   void initState() {
-    _addVisitPresenter.view = this;
+    _addStockPresenter.view = this;
     super.initState();
     getSiteFromFirebase();
   }
@@ -69,9 +69,12 @@ class _AddVisitScreenState extends State<AddVisitScreen>
   void getSiteFromFirebase() async {
     final result =
         (await FirebaseFirestore.instance.collection('sites').get()).docs;
+    final resultProduct =
+        (await FirebaseFirestore.instance.collection('products').get()).docs;
 
     setState(() {
       siteResponse = result.map((e) => e.data()).toList();
+      productsResponse = resultProduct.map((e) => e.data()).toList();
       print('=== $siteResponse');
     });
   }
@@ -164,6 +167,31 @@ class _AddVisitScreenState extends State<AddVisitScreen>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                                color: kWhite,
+                                borderRadius: BorderRadius.circular(8)),
+                            child: const InkWell(
+                                child: Icon(
+                              Icons.flight_takeoff_rounded,
+                              color: kBlue,
+                              size: 22,
+                            )),
+                          ),
+                          Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                  color: kLightWhite,
+                                  borderRadius: BorderRadius.circular(8)),
+                              child: Text('Site Kunjungan',
+                                  style: kPoppinsSemiBold.copyWith(
+                                      color: kDarkBlue, fontSize: 14))),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
                       InkWell(
                           onTap: () async {
                             Navigator.push(
@@ -177,7 +205,7 @@ class _AddVisitScreenState extends State<AddVisitScreen>
                               print(
                                   '=== hasil adalah ${siteResponse[value]['site_name']}');
                               setState(() {
-                                _addVisitModel.originSelectName =
+                                _addStockModel.originSelectName.text =
                                     siteResponse[value]['site_name'];
                               });
                             });
@@ -186,10 +214,11 @@ class _AddVisitScreenState extends State<AddVisitScreen>
                             height: 100,
                             child: AppIconText(
                               icon: Icons.flight_takeoff_rounded,
-                              text: "Dari",
-                              destination: _addVisitModel.originSelectName == ''
-                                  ? 'tekan disini'
-                                  : _addVisitModel.originSelectName,
+                              text: "Site",
+                              destination:
+                                  _addStockModel.originSelectName.text == ''
+                                      ? 'tekan disini'
+                                      : _addStockModel.originSelectName.text,
                             ),
                           )),
                       const SizedBox(height: 30),
@@ -202,7 +231,7 @@ class _AddVisitScreenState extends State<AddVisitScreen>
                                 borderRadius: BorderRadius.circular(8)),
                             child: const InkWell(
                                 child: Icon(
-                              Icons.notification_important,
+                              Icons.production_quantity_limits,
                               color: kBlue,
                               size: 22,
                             )),
@@ -212,68 +241,94 @@ class _AddVisitScreenState extends State<AddVisitScreen>
                               decoration: BoxDecoration(
                                   color: kLightWhite,
                                   borderRadius: BorderRadius.circular(8)),
-                              child: Text('CheckIn atau Checkout ?',
+                              child: Text('Product Name',
                                   style: kPoppinsSemiBold.copyWith(
                                       color: kDarkBlue, fontSize: 14))),
                         ],
                       ),
                       const SizedBox(height: 8),
-                      Container(
-                        height: 25,
-                        margin: const EdgeInsets.only(
-                            top: 1, left: 28, bottom: 1, right: 28),
-                        decoration: const BoxDecoration(
-                            color: Colors.transparent,
-                            border: Border(
-                              bottom: BorderSide(
-                                  width: 1, color: Color(0xff2D8EFF)),
-                            )),
-                        child: TypeAheadFormField(
-                          hideSuggestionsOnKeyboardHide: false,
-                          textFieldConfiguration: TextFieldConfiguration(
-                            controller: _addVisitModel.statusVisit,
-                            decoration: const InputDecoration(
-                                hintText: "CheckIn atau checkOut",
-                                border: InputBorder.none,
-                                errorStyle:
-                                    TextStyle(color: Colors.red, fontSize: 9),
-                                fillColor: Color(0xff9397a0),
-                                hintStyle: TextStyle(
-                                    color: Color(0xff2D8EFF), fontSize: 14)),
-                          ),
-                          suggestionsCallback: (pattern) {
-                            // Gantilah ini dengan daftar pilihan statis Anda
-                            return _dropdownItems
-                                .where((item) => item['name']
-                                    .toLowerCase()
-                                    .contains(pattern.toLowerCase()))
-                                .toList();
-                          },
-                          itemBuilder:
-                              (context, Map<String, dynamic> suggestion) {
-                            return ListTile(
-                              title: Text(suggestion['name']),
-                            );
-                          },
-                          noItemsFoundBuilder: (context) => const SizedBox(
-                            height: 110,
-                            child: Center(
-                              child: Text(
-                                'Not Found.',
-                                style: TextStyle(fontSize: 24),
-                              ),
-                            ),
-                          ),
-                          onSuggestionSelected:
-                              (Map<String, dynamic> suggestion) {
-                            setState(() {
-                              _addVisitModel.idStatus = suggestion['id'];
-                              _addVisitModel.statusVisit.text =
-                                  suggestion['name'];
+                      InkWell(
+                          onTap: () async {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ModalSearchProduct(
+                                    productResponse: productsResponse,
+                                    isCalender: false,
+                                  ),
+                                )).then((value) {
+                              print(
+                                  '=== hasil adalah ${productsResponse[value]['product_name']}');
+                              setState(() {
+                                _addStockModel.productName.text =
+                                    productsResponse[value]['product_name'];
+                              });
                             });
                           },
-                        ),
+                          child: SizedBox(
+                            height: 100,
+                            child: AppIconText(
+                              icon: Icons.production_quantity_limits,
+                              text: "Product Name",
+                              destination: _addStockModel.productName.text == ''
+                                  ? 'tekan disini'
+                                  : _addStockModel.productName.text,
+                            ),
+                          )),
+                      const SizedBox(
+                        height: 30,
                       ),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                                color: kWhite,
+                                borderRadius: BorderRadius.circular(8)),
+                            child: const InkWell(
+                                child: Icon(
+                              Icons.date_range,
+                              color: kBlue,
+                              size: 22,
+                            )),
+                          ),
+                          Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                  color: kLightWhite,
+                                  borderRadius: BorderRadius.circular(8)),
+                              child: Text('Expired Date',
+                                  style: kPoppinsSemiBold.copyWith(
+                                      color: kDarkBlue, fontSize: 14))),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      InkWell(
+                          onTap: () async {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ModalSearchCalender(
+                                    isCalender: false,
+                                  ),
+                                )).then((value) {
+                              print('=== hasil adalah value');
+                              setState(() {
+                                _addStockModel.expiredDate.text = value;
+                              });
+                            });
+                          },
+                          child: SizedBox(
+                            height: 100,
+                            child: AppIconText(
+                              icon: Icons.date_range,
+                              text: "Expired",
+                              destination: _addStockModel.expiredDate.text == ''
+                                  ? 'tekan disini'
+                                  : _addStockModel.expiredDate.text,
+                            ),
+                          )),
                       const SizedBox(
                         height: 30,
                       ),
@@ -315,7 +370,7 @@ class _AddVisitScreenState extends State<AddVisitScreen>
                                   width: 1, color: Color(0xff2D8EFF)),
                             )),
                         child: TextFormField(
-                          controller: _addVisitModel.keterangan,
+                          controller: _addStockModel.keterangan,
                           validator: (value) {
                             return value!.length < 5
                                 ? 'Tulis minimal 5 karakter'
@@ -336,7 +391,6 @@ class _AddVisitScreenState extends State<AddVisitScreen>
                       const SizedBox(
                         height: 30,
                       ),
-
                       Row(
                         children: [
                           Container(
@@ -346,7 +400,7 @@ class _AddVisitScreenState extends State<AddVisitScreen>
                                 borderRadius: BorderRadius.circular(8)),
                             child: const InkWell(
                                 child: Icon(
-                              Icons.location_on_outlined,
+                              Icons.notification_important,
                               color: kBlue,
                               size: 22,
                             )),
@@ -356,7 +410,7 @@ class _AddVisitScreenState extends State<AddVisitScreen>
                               decoration: BoxDecoration(
                                   color: kLightWhite,
                                   borderRadius: BorderRadius.circular(8)),
-                              child: Text('Location',
+                              child: Text('qty',
                                   style: kPoppinsSemiBold.copyWith(
                                       color: kDarkBlue, fontSize: 14))),
                         ],
@@ -365,81 +419,33 @@ class _AddVisitScreenState extends State<AddVisitScreen>
                         height: 8,
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 28),
-                        child: Text(
-                            '${_addVisitModel.lat}, ${_addVisitModel.long}',
-                            style: kPoppinsRegularBold.copyWith(
-                                color: kDarkBlue, fontSize: 12)),
+                        margin: const EdgeInsets.only(
+                            top: 1, left: 28, bottom: 1, right: 28),
+                        decoration: const BoxDecoration(
+                            color: Colors.transparent,
+                            border: Border(
+                              bottom: BorderSide(
+                                  width: 1, color: Color(0xff2D8EFF)),
+                            )),
+                        child: TextFormField(
+                          controller: _addStockModel.qty,
+                          validator: (value) {
+                            return value!.length < 5
+                                ? 'Tulis minimal 5 karakter'
+                                : null;
+                          },
+                          onChanged: (str) {},
+                          style: const TextStyle(color: kGrey, fontSize: 14),
+                          decoration: const InputDecoration(
+                              hintText: "Tulis QTY",
+                              border: InputBorder.none,
+                              errorStyle:
+                                  TextStyle(color: Colors.red, fontSize: 9),
+                              fillColor: kGrey,
+                              hintStyle: TextStyle(
+                                  color: Color(0xff2D8EFF), fontSize: 12)),
+                        ),
                       ),
-                      // Row(
-                      //   children: [
-                      //     Container(
-                      //       padding: const EdgeInsets.all(4),
-                      //       decoration: BoxDecoration(
-                      //           color: kWhite,
-                      //           borderRadius: BorderRadius.circular(8)),
-                      //       child: const InkWell(
-                      //           child: Icon(
-                      //         Icons.camera_alt_outlined,
-                      //         color: kBlue,
-                      //         size: 22,
-                      //       )),
-                      //     ),
-                      //     Container(
-                      //         padding: const EdgeInsets.all(8),
-                      //         decoration: BoxDecoration(
-                      //             color: kLightWhite,
-                      //             borderRadius: BorderRadius.circular(8)),
-                      //         child: Text('Picture',
-                      //             style: kPoppinsSemiBold.copyWith(
-                      //                 color: kDarkBlue, fontSize: 14))),
-                      //   ],
-                      // ),
-
-                      const SizedBox(
-                        height: 12,
-                      ),
-                      Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 18),
-                          height: 120,
-                          decoration: BoxDecoration(
-                            color: const Color.fromARGB(255, 203, 204, 235),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              _getCurrentLocation().then((value) {
-                                setState(() {
-                                  _addVisitModel.lat = '${value.latitude}';
-                                  _addVisitModel.long = '${value.longitude}';
-                                  _addVisitModel.location.text =
-                                      '${value.latitude}, ${value.longitude}';
-                                });
-                                // _liveLocation();
-                              });
-                            },
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all(
-                                  const Color.fromARGB(255, 203, 204, 235)),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const InkWell(
-                                    child: Icon(
-                                  Icons.location_on,
-                                  color: kBlue,
-                                  size: 28,
-                                )),
-                                const SizedBox(
-                                  width: 8,
-                                ),
-                                Text('Get Location',
-                                    style: kPoppinsMediumBold.copyWith(
-                                        color: kDarkBlue, fontSize: 14))
-                              ],
-                            ),
-                          )),
                     ],
                   ),
                 ),
@@ -450,7 +456,7 @@ class _AddVisitScreenState extends State<AddVisitScreen>
             //   padding: const EdgeInsets.all(20),
             //   child: ElevatedButton(
             //       onPressed: () {
-            //         _openMap(_addVisitModel.lat, _addVisitModel.long);
+            //         _openMap(_addStockModel.lat, _addStockModel.long);
             //       },
             //       style: ButtonStyle(
             //         backgroundColor: MaterialStateProperty.all(kLightBlue),
@@ -468,10 +474,10 @@ class _AddVisitScreenState extends State<AddVisitScreen>
               padding: const EdgeInsets.all(25),
               child: ElevatedButton(
                   onPressed: () {
-                    if (_addVisitModel.lat == '' ||
-                        _addVisitModel.originSelectName == '') {
+                    if (_addStockModel.qty.text == '' ||
+                        _addStockModel.originSelectName.text == '') {
                       Fluttertoast.showToast(
-                          msg: 'pastikan sudah scan lokasi 👋',
+                          msg: 'pastikan site dan qty 👋',
                           toastLength: Toast.LENGTH_LONG,
                           gravity: ToastGravity.BOTTOM,
                           timeInSecForIosWeb: 2,
@@ -479,7 +485,7 @@ class _AddVisitScreenState extends State<AddVisitScreen>
                           textColor: Colors.white,
                           fontSize: 15);
                     } else {
-                      _addVisitPresenter.visit();
+                      _addStockPresenter.visit();
                     }
                   },
                   style: ButtonStyle(
@@ -521,7 +527,7 @@ class _AddVisitScreenState extends State<AddVisitScreen>
   }
 
   @override
-  void refreshData(AddVisitModel addVisitModel) {
-    _addVisitModel = addVisitModel;
+  void refreshData(AddStockModel addStockModel) {
+    _addStockModel = addStockModel;
   }
 }

@@ -60,6 +60,9 @@ dependencies:
   cloud_firestore: ^4.13.3
   flutter_typeahead: ^4.6.2
   geolocator: ^10.0.1
+  firebase_storage:
+  file_picker:
+  path:
 
 dev_dependencies:
   flutter_test:

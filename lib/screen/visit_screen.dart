@@ -5,14 +5,14 @@ import 'package:line_icons/line_icons.dart';
 import '../helper/constants.dart';
 import 'visit/add_visit_screen.dart';
 
-class VisiteScreen extends StatefulWidget {
-  const VisiteScreen({super.key});
+class VisitScreen extends StatefulWidget {
+  const VisitScreen({super.key});
 
   @override
-  State<VisiteScreen> createState() => _VisiteScreenState();
+  State<VisitScreen> createState() => _VisitScreenState();
 }
 
-class _VisiteScreenState extends State<VisiteScreen> {
+class _VisitScreenState extends State<VisitScreen> {
   var db = FirebaseFirestore.instance;
 
   @override
@@ -24,7 +24,7 @@ class _VisiteScreenState extends State<VisiteScreen> {
         child: Column(
           children: [
             Container(
-              color: kLightBlue,
+              color: kAlmostLightBlue,
               padding: const EdgeInsets.only(top: 35, left: 20, right: 20),
               height: 100,
               child: Row(

@@ -140,7 +140,7 @@ class _AddVisitScreenState extends State<AddVisitScreen>
                                         borderRadius: BorderRadius.circular(8)),
                                     child: const InkWell(
                                         child: Icon(
-                                      Icons.timer_outlined,
+                                      Icons.flight,
                                       color: kLighterWhite,
                                       size: 16,
                                     )),

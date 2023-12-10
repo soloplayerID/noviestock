@@ -27,12 +27,6 @@ class _AddStocknState extends State<AddStockScreen> implements AddStockState {
   List siteResponse = [];
   List productsResponse = [];
 
-  // Daftar pilihan untuk dropdown, berisi Map dengan pasangan ID dan nama
-  final List<Map<String, dynamic>> _dropdownItems = [
-    {'id': '0', 'name': 'checkin'},
-    {'id': '1', 'name': 'checkout'},
-  ];
-
   _AddStocknState() {
     _addStockPresenter = AddStockPresenter();
   }
@@ -114,7 +108,7 @@ class _AddStocknState extends State<AddStockScreen> implements AddStockState {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Visit checkin',
+                            'Add Stock',
                             style: kPoppinsMediumBold.copyWith(
                                 color: kLighterWhite, fontSize: 18),
                           ),

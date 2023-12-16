@@ -1,9 +1,31 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../helper/constants.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  @override
+  void initState() {
+    checkUserLoginStatus();
+    super.initState();
+  }
+
+  void checkUserLoginStatus() async {
+    final user = _auth.currentUser;
+    if (user == null) {
+      // Pengguna belum login, arahkan ke halaman login
+      Navigator.pushNamed(context, "/");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -136,63 +158,63 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(
               height: 20,
             ),
-            SizedBox(
-              height: 88,
-              child: ListView.builder(
-                itemCount: 1,
-                scrollDirection: Axis.horizontal,
-                itemBuilder: ((context, index) {
-                  return InkWell(
-                    onTap: () {},
-                    child: Container(
-                      padding: const EdgeInsets.all(9),
-                      margin: const EdgeInsets.only(right: 20),
-                      width: 208,
-                      height: 88,
-                      decoration: BoxDecoration(
-                          color: kWhite,
-                          borderRadius: BorderRadius.circular(kBorderRadius),
-                          boxShadow: [
-                            BoxShadow(
-                              color: kDarkBlue.withOpacity(0.051),
-                              offset: const Offset(0.0, 3.0),
-                              blurRadius: 24.0,
-                              spreadRadius: 0.0,
-                            ),
-                          ]),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 70,
-                            decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.circular(kBorderRadius),
-                                image: const DecorationImage(
-                                    fit: BoxFit.cover,
-                                    image: NetworkImage(
-                                        'https://res.klook.com/image/upload/fl_lossy.progressive,w_800,c_fill,q_85/destination/kvcqcy32vayw4b2qnmwk.jpg'))),
-                          ),
-                          const SizedBox(
-                            width: 12,
-                          ),
-                          Flexible(
-                              child: Column(
-                            children: [
-                              Text('pengumuman',
-                                  maxLines: 3,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: kPoppinsSemiBold.copyWith(
-                                    fontSize: 12,
-                                  )),
-                            ],
-                          ))
-                        ],
-                      ),
-                    ),
-                  );
-                }),
-              ),
-            ),
+            // SizedBox(
+            //   height: 88,
+            //   child: ListView.builder(
+            //     itemCount: 1,
+            //     scrollDirection: Axis.horizontal,
+            //     itemBuilder: ((context, index) {
+            //       return InkWell(
+            //         onTap: () {},
+            //         child: Container(
+            //           padding: const EdgeInsets.all(9),
+            //           margin: const EdgeInsets.only(right: 20),
+            //           width: 208,
+            //           height: 88,
+            //           decoration: BoxDecoration(
+            //               color: kWhite,
+            //               borderRadius: BorderRadius.circular(kBorderRadius),
+            //               boxShadow: [
+            //                 BoxShadow(
+            //                   color: kDarkBlue.withOpacity(0.051),
+            //                   offset: const Offset(0.0, 3.0),
+            //                   blurRadius: 24.0,
+            //                   spreadRadius: 0.0,
+            //                 ),
+            //               ]),
+            //           child: Row(
+            //             children: [
+            //               Container(
+            //                 width: 70,
+            //                 decoration: BoxDecoration(
+            //                     borderRadius:
+            //                         BorderRadius.circular(kBorderRadius),
+            //                     image: const DecorationImage(
+            //                         fit: BoxFit.cover,
+            //                         image: NetworkImage(
+            //                             'https://res.klook.com/image/upload/fl_lossy.progressive,w_800,c_fill,q_85/destination/kvcqcy32vayw4b2qnmwk.jpg'))),
+            //               ),
+            //               const SizedBox(
+            //                 width: 12,
+            //               ),
+            //               Flexible(
+            //                   child: Column(
+            //                 children: [
+            //                   Text('pengumuman',
+            //                       maxLines: 3,
+            //                       overflow: TextOverflow.ellipsis,
+            //                       style: kPoppinsSemiBold.copyWith(
+            //                         fontSize: 12,
+            //                       )),
+            //                 ],
+            //               ))
+            //             ],
+            //           ),
+            //         ),
+            //       );
+            //     }),
+            //   ),
+            // ),
           ],
         ),
       ),

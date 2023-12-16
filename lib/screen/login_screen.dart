@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -11,7 +13,42 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _formkey = GlobalKey<FormState>();
   bool _isPasswordVisible = true;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final auth = FirebaseAuth.instance;
 
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  void checkUserLoginStatus() async {
+    final user = auth.currentUser;
+    if (user != null) {
+      // Pengguna belum login, arahkan ke halaman login
+      Navigator.pushReplacementNamed(context, "/home");
+    }
+  }
+
+  Future<bool> login(BuildContext context) async {
+    try {
+      final userCredential = await auth.signInWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+
+      if (userCredential.user != null) {
+        // Gunakan context yang benar di sini
+        return true; // Login berhasil
+      }
+    } catch (e) {
+      // Gunakan context yang benar di sini jika Anda perlu
+      print("Error: $e");
+      return false;
+      // Handle kesalahan
+    }
+    return false; // Login gagal
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,18 +106,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                     width: 1, color: Color(0xff2D8EFF)),
                               )),
                           child: TextFormField(
+                            controller: _emailController,
                             validator: (value) {
-                              if (value == null) {
-                                
-                              }
+                              if (value == null) {}
                               return null;
                             },
                             onChanged: (str) {
-                              setState(() {
-                                
-                              });
+                              setState(() {});
                             },
-                            
                             style: const TextStyle(
                                 color: Colors.grey, fontSize: 14),
                             decoration: const InputDecoration(
@@ -89,11 +122,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                   color: Color(0xff2D8EFF),
                                   size: 18,
                                 ),
-                                hintText: "Username",
+                                hintText: "Email",
                                 border: InputBorder.none,
-                                
-                                errorStyle: TextStyle(
-                                    color: Colors.red, fontSize: 9),
+                                errorStyle:
+                                    TextStyle(color: Colors.red, fontSize: 9),
                                 fillColor: Colors.grey,
                                 hintStyle: TextStyle(
                                     color: Color(0xff2D8EFF), fontSize: 12)),
@@ -114,18 +146,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                     width: 1, color: Color(0xff2D8EFF)),
                               )),
                           child: TextFormField(
+                            controller: _passwordController,
                             validator: (value) {
-                              if (value == null) {
-                                
-                              }
+                              if (value == null) {}
                               return null;
                             },
                             onChanged: (str) {
-                              setState(() {
-                                
-                              });
+                              setState(() {});
                             },
-                            
                             obscureText: _isPasswordVisible,
                             style: const TextStyle(
                                 color: Colors.grey, fontSize: 14),
@@ -150,7 +178,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                     }),
                                 hintText: "Password",
                                 border: InputBorder.none,
-                                
                                 errorStyle: const TextStyle(
                                     color: Colors.red, fontSize: 9),
                                 fillColor: Colors.grey,
@@ -161,7 +188,20 @@ class _LoginScreenState extends State<LoginScreen> {
                         InkWell(
                           splashColor: const Color(0xff7474BF),
                           onTap: () async {
-                            Navigator.pushReplacementNamed(context, "/home");
+                            bool loginResult = await login(context);
+                            if (loginResult) {
+                              // Login berhasil
+                              Navigator.pushReplacementNamed(context, "/home");
+                            } else {
+                              Fluttertoast.showToast(
+                                  msg: "Password Salah",
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.CENTER,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor: Colors.red,
+                                  textColor: Colors.white,
+                                  fontSize: 16.0);
+                            }
                           },
                           child: Container(
                             margin: const EdgeInsets.only(top: 50.0),

@@ -65,6 +65,7 @@ dependencies:
   path:
   gap: ^3.0.1
   table_calendar: ^3.0.9
+  firebase_auth: ^4.15.3
 
 dev_dependencies:
   flutter_test:

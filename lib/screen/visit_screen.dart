@@ -26,7 +26,7 @@ class _VisitScreenState extends State<VisitScreen> {
             Container(
               color: kAlmostLightBlue,
               padding: const EdgeInsets.only(top: 35, left: 20, right: 20),
-              height: 100,
+              height: 95,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -60,172 +60,162 @@ class _VisitScreenState extends State<VisitScreen> {
               ),
             ),
             Expanded(
-                child: Container(
-              padding: const EdgeInsets.all(20),
-              width: MediaQuery.of(context).size.width,
-              height: double.infinity,
-              color: const Color(0xffecedf2),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                width: MediaQuery.of(context).size.width,
+                height: double.infinity,
+                color: const Color(0xffecedf2),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Hello Novie',
-                        style: kPoppinsRegularBold.copyWith(
-                            color: kGrey, fontSize: 16)),
-                    Text('Kunjungan',
-                        style: kPoppinsMediumBold.copyWith(
-                            color: kAlmostLightBlue, fontSize: 28)),
-                    const SizedBox(
-                      height: 12,
+                    Text(
+                      'Hello Novie',
+                      style: kPoppinsRegularBold.copyWith(
+                          color: kGrey, fontSize: 16),
                     ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      child: StreamBuilder(
-                          stream: db.collection('visits').snapshots(),
-                          builder: (context, snapshots) {
-                            if (snapshots.connectionState ==
-                                ConnectionState.waiting) {
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            }
-                            if (snapshots.hasError) {
-                              return const Center(child: Text('Error'));
-                            }
-                            //Olah data
-                            var dataVisits = snapshots.data!.docs;
-                            return ListView.builder(
-                              scrollDirection: Axis.vertical,
-                              shrinkWrap: true,
-                              itemCount: dataVisits.length,
-                              itemBuilder: (context, index) {
-                                return InkWell(
-                                  onTap: () {
-                                    // Navigator.push(
-                                    //     context,
-                                    //     MaterialPageRoute(
-                                    //         builder: (context) => DetailScreen(
-                                    //               harga: dataDestinations[index]
-                                    //                   .data()['harga'],
-                                    //               imgUrl:
-                                    //                   dataDestinations[index]
-                                    //                       .data()['image'],
-                                    //               placeName:
-                                    //                   dataDestinations[index]
-                                    //                       .data()['name'],
-                                    //               desc: dataDestinations[index]
-                                    //                   .data()['desc'],
-                                    //               destination: dataDestinations[
-                                    //                       index]
-                                    //                   .data()['destination'],
-                                    //             )));
-                                  },
-                                  child: Container(
-                                    height: 120,
-                                    margin: const EdgeInsets.symmetric(
-                                        vertical: 5.0),
-                                    padding: const EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                        color: kLighterGreen,
-                                        borderRadius:
-                                            BorderRadius.circular(15)),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                                '${dataVisits[index].data()['createdDate']}',
-                                                maxLines: 2,
-                                                style:
-                                                    kPoppinsMediumBold.copyWith(
-                                                        color: kLightBlue,
-                                                        fontSize: 13.3)),
-                                            Container(
-                                                padding:
-                                                    const EdgeInsets.all(8),
-                                                decoration: BoxDecoration(
-                                                    color:
-                                                        const Color(0xffFFF0C5),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            12)),
+                    Text(
+                      'Kunjungan',
+                      style: kPoppinsMediumBold.copyWith(
+                          color: kAlmostLightBlue, fontSize: 28),
+                    ),
+                    const SizedBox(height: 12),
+                    StreamBuilder(
+                      stream: db.collection('visits').snapshots(),
+                      builder: (context, snapshots) {
+                        if (snapshots.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        if (snapshots.hasError) {
+                          return const Center(child: Text('Error'));
+                        }
+                        // Olah data
+                        var dataVisits = snapshots.data!.docs;
+                        return Expanded(
+                          child: ListView.builder(
+                            scrollDirection: Axis.vertical,
+                            itemCount: dataVisits.length,
+                            itemBuilder: (context, index) {
+                              return InkWell(
+                                onTap: () {
+                                  // Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute(
+                                  //     builder: (context) => DetailScreen(
+                                  //       harga: dataDestinations[index].data()['harga'],
+                                  //       imgUrl: dataDestinations[index].data()['image'],
+                                  //       placeName: dataDestinations[index].data()['name'],
+                                  //       desc: dataDestinations[index].data()['desc'],
+                                  //       destination: dataDestinations[index].data()['destination'],
+                                  //     ),
+                                  //   ),
+                                  // );
+                                },
+                                child: Container(
+                                  height: 120,
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 5.0),
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0XFFf5f6f8),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                              '${dataVisits[index].data()['createdDate']}',
+                                              maxLines: 2,
+                                              style:
+                                                  kPoppinsMediumBold.copyWith(
+                                                      color: kLightBlue,
+                                                      fontSize: 13.3)),
+                                          Container(
+                                              padding: const EdgeInsets.all(8),
+                                              decoration: BoxDecoration(
+                                                  color:
+                                                      const Color(0xffFFF0C5),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          12)),
+                                              child: Text(
+                                                  '${dataVisits[index].data()['visitName']}',
+                                                  style: kPoppinsMediumBold
+                                                      .copyWith(
+                                                          color: kDarkBlue,
+                                                          fontSize: 14)))
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 8,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              SizedBox(
+                                                  width: 200,
+                                                  child: Text(
+                                                      '${dataVisits[index].data()['name_site']}',
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      maxLines: 1,
+                                                      style: kPoppinsMediumBold
+                                                          .copyWith(
+                                                              color: kGrey,
+                                                              fontSize: 14))),
+                                              SizedBox(
+                                                width: 200,
                                                 child: Text(
-                                                    '${dataVisits[index].data()['visitName']}',
+                                                    '${dataVisits[index].data()['createdTime']}',
                                                     style: kPoppinsMediumBold
                                                         .copyWith(
                                                             color: kDarkBlue,
-                                                            fontSize: 14)))
-                                          ],
-                                        ),
-                                        const SizedBox(
-                                          height: 8,
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                SizedBox(
-                                                    width: 200,
-                                                    child: Text(
-                                                        '${dataVisits[index].data()['description']}',
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        maxLines: 1,
-                                                        style:
-                                                            kPoppinsMediumBold
-                                                                .copyWith(
-                                                                    color:
-                                                                        kGrey,
-                                                                    fontSize:
-                                                                        14))),
-                                                SizedBox(
-                                                  width: 200,
-                                                  child: Text(
-                                                      '${dataVisits[index].data()['createdTime']}',
-                                                      style: kPoppinsMediumBold
-                                                          .copyWith(
-                                                              color: kDarkBlue,
-                                                              fontSize: 14)),
-                                                ),
-                                              ],
-                                            ),
-                                            Container(
-                                              padding: const EdgeInsets.all(12),
-                                              decoration: BoxDecoration(
-                                                  color: kLightWhite,
-                                                  borderRadius:
-                                                      BorderRadius.circular(8)),
-                                              child: InkWell(
-                                                  onTap: () {},
-                                                  child: const Icon(
-                                                    Icons.arrow_right,
-                                                    color: kGrey,
-                                                  )),
-                                            ),
-                                          ],
-                                        )
-                                      ],
-                                    ),
+                                                            fontSize: 14)),
+                                              ),
+                                            ],
+                                          ),
+                                          Container(
+                                            padding: const EdgeInsets.all(12),
+                                            decoration: BoxDecoration(
+                                                color: kLightWhite,
+                                                borderRadius:
+                                                    BorderRadius.circular(8)),
+                                            child: InkWell(
+                                                onTap: () {},
+                                                child: const Icon(
+                                                  Icons.arrow_right,
+                                                  color: kGrey,
+                                                )),
+                                          ),
+                                        ],
+                                      )
+                                    ],
                                   ),
-                                );
-                              },
-                            );
-                          }),
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
               ),
-            )),
+            ),
           ],
         ),
       ),

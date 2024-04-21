@@ -8,6 +8,7 @@ const Color kLighterWhite = Color(0xfffcfcfc);
 const Color kGrey = Color(0xff9397a0);
 const Color kLigtGrey = Color(0xffa7a7a7);
 
+const Color kRed = Color(0xFFFD6554);
 const Color kBlue = Color(0xff5474fd);
 const Color kAlmostLightBlue = Color(0xff05419F);
 const Color kLightBlue = Color(0xff83b1ff);

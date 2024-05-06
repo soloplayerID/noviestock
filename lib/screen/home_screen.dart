@@ -146,7 +146,7 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Pengumuman",
+                  "Pemberitahuan",
                   style: textTheme.titleLarge,
                 ),
                 const Text(

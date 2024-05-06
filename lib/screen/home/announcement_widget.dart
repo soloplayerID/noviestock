@@ -1,6 +1,10 @@
+// ignore_for_file: avoid_print
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server/gmail.dart';
 import 'package:novistock/helper/constants.dart';
 
 class AnnouncementWidget extends StatefulWidget {
@@ -18,6 +22,7 @@ class _AnnouncementWidgetState extends State<AnnouncementWidget> {
   void initState() {
     today = getFormattedDate();
     super.initState();
+    checkExpiredStock(today);
   }
 
   String getFormattedDate() {
@@ -26,11 +31,58 @@ class _AnnouncementWidgetState extends State<AnnouncementWidget> {
     return formattedDate;
   }
 
+  void checkExpiredStock(String today) async {
+    final stockRef = FirebaseFirestore.instance.collection('stocks');
+    final querySnapshot =
+        await stockRef.where('expired_date', isLessThanOrEqualTo: today).get();
+    String username = 'ilhamtaufik22@gmail.com'; //Your Email
+    String password =
+        'gvobpglpkmqdfuuc'; // 16 Digits App Password Generated From Google Account
+
+    final smtpServer = gmail(username, password);
+    // Use the SmtpServer class to configure an SMTP server:
+    // final smtpServer = SmtpServer('smtp.domain.com');
+    // See the named arguments of SmtpServer for further configuration
+    // options.
+
+    // Create our message.
+    if (querySnapshot.docs.isNotEmpty) {
+      final message = Message()
+            ..from = Address(username, 'alert stock')
+            ..recipients.add('ilhamtaufikp@gmail.com')
+            // ..ccRecipients.addAll(['abc@gmail.com', 'xyz@gmail.com']) // For Adding Multiple Recipients
+            // ..bccRecipients.add(Address('a@gmail.com')) For Binding Carbon Copy of Sent Email
+            ..subject = 'Mail from Mailer'
+            ..text =
+                'Berikut adalah daftar stock yang sudah expired:\n\n ${querySnapshot.docs.map((doc) => '${doc['product_name']} - ${doc['qty']}: ${doc['expired_date']}').join('\n')}'
+          // ..html = "<h1>Test</h1>\n<p>Hey! Here's some HTML content</p>"; // For Adding Html in email
+          // ..attachments = [
+          //   FileAttachment(File('image.png'))  //For Adding Attachments
+          //     ..location = Location.inline
+          //     ..cid = '<myimg@3.141>'
+          // ]
+          ;
+
+      try {
+        final sendReport = await send(message, smtpServer);
+        print('Message sent: $sendReport');
+      } on MailerException catch (e) {
+        print('Message not sent.');
+        print(e.message);
+        for (var p in e.problems) {
+          print('Problem: ${p.code}: ${p.msg}');
+        }
+      }
+    } else {
+      print('No expired stocks found');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 88,
-      child: StreamBuilder<QuerySnapshot>(
+      height: 110,
+      child: StreamBuilder(
         stream: db
             .collection('stocks')
             .where('expired_date', isLessThanOrEqualTo: today)
@@ -45,7 +97,7 @@ class _AnnouncementWidgetState extends State<AnnouncementWidget> {
             return const Center(child: Text('Error'));
           }
 
-          final dataProducts = snapshots.data!.docs;
+          var dataProducts = snapshots.data!.docs;
 
           if (dataProducts.isEmpty) {
             return const Center(
@@ -58,7 +110,6 @@ class _AnnouncementWidgetState extends State<AnnouncementWidget> {
             shrinkWrap: true,
             itemCount: dataProducts.length,
             itemBuilder: (context, index) {
-              final productData = dataProducts[index].data();
               return InkWell(
                 onTap: () {},
                 child: Container(
@@ -78,18 +129,30 @@ class _AnnouncementWidgetState extends State<AnnouncementWidget> {
                         ),
                       ]),
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Stock Expired $today',
+                      Text(
+                          'Stock Expired $today qty: ${dataProducts[index].data()['qty']}',
                           maxLines: 3,
                           overflow: TextOverflow.ellipsis,
                           style: kPoppinsSemiBold.copyWith(
                               fontSize: 14, color: kRed)),
-                      Text('Barang mendekati masa expired',
+                      Text(
+                          'Barang ${dataProducts[index].data()['product_name']}',
                           maxLines: 3,
                           overflow: TextOverflow.ellipsis,
                           style: kPoppinsRegularBold.copyWith(
                             fontSize: 12,
                           )),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      Text('ambil tindakan',
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          style: kPoppinsRegularBold.copyWith(
+                              fontSize: 12, color: Colors.blueAccent)),
                     ],
                   ),
                 ),

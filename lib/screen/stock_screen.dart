@@ -141,7 +141,7 @@ class _StockScreenState extends State<StockScreen> {
                                   // );
                                 },
                                 child: Container(
-                                  height: 160,
+                                  height: 170,
                                   margin:
                                       const EdgeInsets.symmetric(vertical: 5.0),
                                   padding: const EdgeInsets.all(10),
